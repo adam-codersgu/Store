@@ -1,15 +1,18 @@
 package com.codersguidebook.store
 
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.codersguidebook.store.databinding.ActivityMainBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
+
+    private val storeViewModel: StoreViewModel by viewModels()
 
     private lateinit var binding: ActivityMainBinding
 
@@ -31,5 +34,13 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        /* FIXME: Here we manually define a list of products
+            In reality, you may want to retrieve product information in real-time from your website. */
+        val broccoli = Product(R.drawable.broccoli, "Broccoli", 1.40)
+        val carrots = Product(R.drawable.carrot, "Carrots", 0.35)
+        val strawberries = Product(R.drawable.strawberry, "Strawberries", 2.00)
+        val items = listOf(broccoli, carrots, strawberries)
+        storeViewModel.products.value = items
     }
 }
