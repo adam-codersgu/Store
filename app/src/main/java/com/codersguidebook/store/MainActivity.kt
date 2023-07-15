@@ -2,6 +2,8 @@ package com.codersguidebook.store
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -57,6 +59,26 @@ class MainActivity : AppCompatActivity() {
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         getCurrencyData()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.currencies_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (exchangeData == null) {
+            Toast.makeText(this, resources.getString(R.string.exchange_data_unavailable), Toast.LENGTH_SHORT).show()
+            getCurrencyData()
+        } else {
+            when (item.itemId) {
+                // TODO: Configure each currency exchange menu item here
+                R.id.currency_gbp -> setCurrency("GBP")
+                R.id.currency_usd -> setCurrency("USD")
+                R.id.currency_eur -> setCurrency("EUR")
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun getCurrencyData(): JSONObject? {
