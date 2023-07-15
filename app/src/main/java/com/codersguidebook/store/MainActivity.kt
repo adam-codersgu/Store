@@ -1,6 +1,8 @@
 package com.codersguidebook.store
 
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -9,12 +11,22 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.codersguidebook.store.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import org.json.JSONObject
+import androidx.preference.PreferenceManager
+import com.loopj.android.http.AsyncHttpClient
+import com.loopj.android.http.TextHttpResponseHandler
+import cz.msebera.android.httpclient.Header
 
 class MainActivity : AppCompatActivity() {
 
     private val storeViewModel: StoreViewModel by viewModels()
 
     private lateinit var binding: ActivityMainBinding
+
+    // TODO: put the ISO code for your store's base currency as the value of the defCurrency variable
+    private val defCurrency = "GBP"
+    private var exchangeData: JSONObject? = null
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,5 +54,52 @@ class MainActivity : AppCompatActivity() {
         val strawberries = Product(R.drawable.strawberry, "Strawberries", 2.00)
         val items = listOf(broccoli, carrots, strawberries)
         storeViewModel.products.value = items
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        getCurrencyData()
+    }
+
+    private fun getCurrencyData(): JSONObject? {
+        val client = AsyncHttpClient()
+
+        // TODO: Replace YOUR-API-KEY-HERE with your exchange rate API key
+        client.get("https://v6.exchangerate-api.com/v6/YOUR-API-KEY-HERE/latest/$defCurrency", object : TextHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, responseString: String?) {
+                if (responseString != null) {
+                    exchangeData = JSONObject(responseString)
+                    val currencyPreference = sharedPreferences.getString("currency", defCurrency) ?: defCurrency
+                    setCurrency(currencyPreference)
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                Toast.makeText(this@MainActivity, resources.getString(R.string.exchange_data_unavailable), Toast.LENGTH_SHORT).show()
+                setCurrency(defCurrency)
+            }
+        })
+
+        return null
+    }
+
+    private fun setCurrency(isoCode: String) {
+        val exchangeRate = exchangeData?.getJSONObject("conversion_rates")?.getDouble(isoCode)
+
+        // TODO: Define the base currency here
+        var currency = Currency(defCurrency, "£", null)
+        if (exchangeRate != null) {
+            when (isoCode) {
+                // TODO: Define each additional currency your store supports here
+                "USD" -> currency = Currency(isoCode, "$", exchangeRate)
+                "EUR" -> currency = Currency(isoCode, "€", exchangeRate)
+            }
+        }
+
+        sharedPreferences.edit().apply {
+            putString("currency", isoCode)
+            apply()
+        }
+
+        storeViewModel.currency.value = currency
+        storeViewModel.calculateOrderTotal()
     }
 }
