@@ -43,6 +43,17 @@ class ProductsFragment : Fragment() {
 
         storeViewModel.products.value?.let { adapter.products.addAll(it) }
         adapter.notifyItemRangeInserted(0, adapter.products.size)
+
+        storeViewModel.currency.observe(viewLifecycleOwner) { currency ->
+            currency?.let {
+                binding.productsRecyclerView.visibility = View.VISIBLE
+                binding.loadingProgress.visibility = View.GONE
+                if (adapter.currency == null || currency.symbol != adapter.currency?.symbol) {
+                    adapter.currency = currency
+                    adapter.notifyItemRangeChanged(0, adapter.itemCount)
+                }
+            }
+        }
     }
 
     fun updateCart(index: Int) {

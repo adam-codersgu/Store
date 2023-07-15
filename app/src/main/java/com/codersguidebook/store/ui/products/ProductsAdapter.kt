@@ -10,11 +10,13 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.codersguidebook.store.Currency
 import com.codersguidebook.store.MainActivity
 import com.codersguidebook.store.Product
 import com.codersguidebook.store.R
 
 class ProductsAdapter(private val activity: MainActivity, private val fragment: ProductsFragment) : RecyclerView.Adapter<ProductsAdapter.ProductsViewHolder>() {
+    var currency: Currency? = null
     val products = mutableListOf<Product>()
 
     inner class ProductsViewHolder(itemView: View) :
@@ -42,7 +44,10 @@ class ProductsAdapter(private val activity: MainActivity, private val fragment: 
 
         holder.productName.text = current.name
 
-        // TODO: Set the price of the product here
+        val price = if (currency?.exchangeRate == null) current.price
+        else current.price * currency?.exchangeRate!!
+
+        holder.productPrice.text = activity.resources.getString(R.string.product_price, currency?.symbol, String.format("%.2f", price))
 
         if (current.inCart) {
             holder.addToBasketButton.text = activity.resources.getString(R.string.remove_from_basket)
