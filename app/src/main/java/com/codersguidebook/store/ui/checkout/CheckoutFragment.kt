@@ -7,13 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DefaultItemAnimator
-import com.codersguidebook.store.MainActivity
-import com.codersguidebook.store.Product
-import com.codersguidebook.store.StoreViewModel
+import com.codersguidebook.store.*
 import com.codersguidebook.store.databinding.FragmentCheckoutBinding
 
 class CheckoutFragment : Fragment() {
 
+    private var amount: Double? = null
+    private var currency: Currency? = null
     private var _binding: FragmentCheckoutBinding? = null
     private val storeViewModel: StoreViewModel by activityViewModels()
     private lateinit var adapter: CheckoutAdapter
@@ -67,6 +67,20 @@ class CheckoutFragment : Fragment() {
             }
             updateOrderTotal()
         }
+
+        storeViewModel.orderTotal.observe(viewLifecycleOwner) { total ->
+            this.amount = total
+            updateOrderTotal()
+        }
+
+        storeViewModel.currency.observe(viewLifecycleOwner) { currency ->
+            this.currency = currency
+            if (currency?.symbol != adapter.currency?.symbol) {
+                adapter.currency = currency
+                adapter.notifyItemRangeChanged(0, adapter.itemCount)
+            }
+            updateOrderTotal()
+        }
     }
 
     fun removeProduct(product: Product) {
@@ -78,6 +92,12 @@ class CheckoutFragment : Fragment() {
             storeViewModel.products.value = products
             storeViewModel.calculateOrderTotal()
         }
+    }
+
+    private fun updateOrderTotal() {
+        if (currency == null || amount == null) return
+        val total = currency!!.symbol + String.format("%.2f", amount)
+        binding.orderTotal.text = resources.getString(R.string.order_total, total)
     }
 
     override fun onDestroyView() {
