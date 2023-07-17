@@ -11,15 +11,22 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.preference.PreferenceManager
+import com.braintreepayments.api.BraintreeClient
+import com.braintreepayments.api.PayPalClient
 import com.codersguidebook.store.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import org.json.JSONObject
-import androidx.preference.PreferenceManager
 import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.TextHttpResponseHandler
 import cz.msebera.android.httpclient.Header
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        // TODO: Replace the value of the below variable with your Sandbox/Production Braintree tokenization key
+        private const val TOKENIZATION_KEY = "YOUR-TOKENIZATION-KEY"
+    }
 
     private val storeViewModel: StoreViewModel by viewModels()
 
@@ -28,6 +35,8 @@ class MainActivity : AppCompatActivity() {
     // TODO: put the ISO code for your store's base currency as the value of the defCurrency variable
     private val defCurrency = "GBP"
     private var exchangeData: JSONObject? = null
+    private lateinit var braintreeClient: BraintreeClient
+    private lateinit var paypalClient: PayPalClient
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +68,9 @@ class MainActivity : AppCompatActivity() {
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         getCurrencyData()
+
+        braintreeClient = BraintreeClient(this, TOKENIZATION_KEY)
+        paypalClient = PayPalClient(braintreeClient)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
