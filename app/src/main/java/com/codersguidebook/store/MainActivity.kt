@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
         getCurrencyData()
 
         braintreeClient = BraintreeClient(this, TOKENIZATION_KEY)
-        paypalClient = PayPalClient(braintreeClient)
+        paypalClient = PayPalClient(this, braintreeClient)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
