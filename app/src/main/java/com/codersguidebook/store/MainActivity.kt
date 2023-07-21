@@ -71,6 +71,8 @@ class MainActivity : AppCompatActivity() {
 
         braintreeClient = BraintreeClient(this, TOKENIZATION_KEY)
         paypalClient = PayPalClient(this, braintreeClient)
+
+        getClientToken()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -135,5 +137,20 @@ class MainActivity : AppCompatActivity() {
 
         storeViewModel.currency.value = currency
         storeViewModel.calculateOrderTotal()
+    }
+
+    private fun getClientToken() {
+        // TODO: Replace YOUR-DOMAIN.com with your website domain
+        AsyncHttpClient().get("https://YOUR-DOMAIN.com/store/client_token.php", object : TextHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, responseString: String?) {
+                braintreeClient = BraintreeClient(this@MainActivity, responseString ?: TOKENIZATION_KEY)
+                paypalClient = PayPalClient(this@MainActivity, braintreeClient)
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseString: String?, throwable: Throwable?) {
+                braintreeClient = BraintreeClient(this@MainActivity, TOKENIZATION_KEY)
+                paypalClient = PayPalClient(this@MainActivity, braintreeClient)
+            }
+        })
     }
 }
