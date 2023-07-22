@@ -81,6 +81,10 @@ class CheckoutFragment : Fragment() {
             }
             updateOrderTotal()
         }
+
+        binding.payButton.setOnClickListener {
+            mainActivity.initiatePayment()
+        }
     }
 
     fun removeProduct(product: Product) {

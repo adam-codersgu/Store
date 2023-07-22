@@ -12,8 +12,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
-import com.braintreepayments.api.BraintreeClient
-import com.braintreepayments.api.PayPalClient
+import com.braintreepayments.api.*
+import com.braintreepayments.api.PayPalCheckoutRequest.USER_ACTION_COMMIT
 import com.codersguidebook.store.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.loopj.android.http.AsyncHttpClient
@@ -21,7 +21,8 @@ import com.loopj.android.http.TextHttpResponseHandler
 import cz.msebera.android.httpclient.Header
 import org.json.JSONObject
 
-class MainActivity : AppCompatActivity() {
+
+class MainActivity : AppCompatActivity(), PayPalListener {
 
     companion object {
         // TODO: Replace the value of the below variable with your Sandbox/Production Braintree tokenization key
@@ -152,5 +153,32 @@ class MainActivity : AppCompatActivity() {
                 paypalClient = PayPalClient(this@MainActivity, braintreeClient)
             }
         })
+    }
+
+    fun initiatePayment() {
+        if (storeViewModel.orderTotal.value == 0.00) return
+
+        val orderTotal = storeViewModel.orderTotal.value.toString()
+        saveOrderTotal(orderTotal)
+
+        val request = PayPalCheckoutRequest(orderTotal)
+        request.currencyCode = storeViewModel.currency.value?.code ?: defCurrency
+        request.userAction = USER_ACTION_COMMIT
+
+        paypalClient.tokenizePayPalAccount(this, request)
+    }
+
+    private fun saveOrderTotal(total: String?) = sharedPreferences.edit().apply {
+        putString("orderTotal", total)
+        apply()
+    }
+
+    override fun onPayPalFailure(error: Exception) {
+        Toast.makeText(this, getString(R.string.paypal_error, error.message), Toast.LENGTH_LONG).show()
+    }
+
+    override fun onPayPalSuccess(payPalAccountNonce: PayPalAccountNonce) {
+        // TODO: Process the successful transaction here
+
     }
 }
