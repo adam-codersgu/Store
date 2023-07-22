@@ -1,9 +1,5 @@
 <resources>
     <string name="app_name">Store</string>
-    <string name="id">Id</string>
-    <string name="amount">Amount</string>
-    <string name="status">Status</string>
-    <string name="empty_basket">Your shopping basket is empty.</string>
     <string name="product_price">%1$s%2$s</string>
     <string name="pay_using_paypal">Pay with PayPal</string>
     <string name="paypal_error">A PayPal authentication error has occurred: %1$s</string>
