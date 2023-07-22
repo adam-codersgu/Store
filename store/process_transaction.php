@@ -1,5 +1,5 @@
 <?php
-	// import the PHP library
+	// Import the PHP library
 	require __DIR__ . '/lib/autoload.php';
 	use Braintree\Gateway;
 
@@ -38,8 +38,10 @@
 	]);
 	
 	if ($result->success) {
+	  // See $result->transaction for details
 	  echo ($outcome = "SUCCESSFUL");
 	} else {
+	  // see $result->message for the error message
 	  echo ($outcome = "UNSUCCESSFUL");
 	}
 	

@@ -17,6 +17,7 @@ import com.braintreepayments.api.PayPalCheckoutRequest.USER_ACTION_COMMIT
 import com.codersguidebook.store.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.loopj.android.http.AsyncHttpClient
+import com.loopj.android.http.RequestParams
 import com.loopj.android.http.TextHttpResponseHandler
 import cz.msebera.android.httpclient.Header
 import org.json.JSONObject
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity(), PayPalListener {
 
     // TODO: put the ISO code for your store's base currency as the value of the defCurrency variable
     private val defCurrency = "GBP"
+    private var deviceData = ""
     private var exchangeData: JSONObject? = null
     private lateinit var braintreeClient: BraintreeClient
     private lateinit var paypalClient: PayPalClient
@@ -178,7 +180,35 @@ class MainActivity : AppCompatActivity(), PayPalListener {
     }
 
     override fun onPayPalSuccess(payPalAccountNonce: PayPalAccountNonce) {
-        // TODO: Process the successful transaction here
+        collectDeviceData()
 
+        val params = RequestParams().apply {
+            put("amount", sharedPreferences.getString("orderTotal", null) ?: return)
+            put("currency_iso_code", storeViewModel.currency.value?.code ?: defCurrency)
+            put("payment_method_nonce", payPalAccountNonce)
+            put("client_device_data", deviceData)
+        }
+
+        saveOrderTotal(null)
+
+        // TODO: Replace YOUR-DOMAIN.com with your website domain
+        AsyncHttpClient().post("https://YOUR-DOMAIN.com/store/process_transaction.php", params,
+            object : TextHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, outcome: String?) {
+                    if (outcome == "SUCCESSFUL") {
+                        Toast.makeText(this@MainActivity, resources.getString(R.string.payment_successful), Toast.LENGTH_LONG).show()
+                        clearCart()
+                    } else Toast.makeText(this@MainActivity, resources.getString(R.string.payment_error), Toast.LENGTH_LONG).show()
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, outcome: String?, throwable: Throwable?) { }
+            }
+        )
+    }
+
+    private fun collectDeviceData() {
+        DataCollector(braintreeClient).collectDeviceData(this) { data, _ ->
+            deviceData = data ?: ""
+        }
     }
 }
