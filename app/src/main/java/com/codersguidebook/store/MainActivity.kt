@@ -211,4 +211,11 @@ class MainActivity : AppCompatActivity(), PayPalListener {
             deviceData = data ?: ""
         }
     }
+
+    private fun clearCart() {
+        storeViewModel.products.value?.forEach {
+                product -> product.inCart = false
+        }
+        storeViewModel.orderTotal.value = 0.00
+    }
 }

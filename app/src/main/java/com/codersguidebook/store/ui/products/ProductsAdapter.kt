@@ -58,7 +58,7 @@ class ProductsAdapter(private val activity: MainActivity, private val fragment: 
         }
 
         holder.addToBasketButton.setOnClickListener {
-            fragment.updateCart(position)
+            fragment.toggleInCart(position)
         }
     }
 

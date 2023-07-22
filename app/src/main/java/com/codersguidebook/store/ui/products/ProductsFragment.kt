@@ -44,6 +44,20 @@ class ProductsFragment : Fragment() {
         storeViewModel.products.value?.let { adapter.products.addAll(it) }
         adapter.notifyItemRangeInserted(0, adapter.products.size)
 
+        storeViewModel.products.observe(viewLifecycleOwner) { products ->
+            if (adapter.products.isEmpty()) {
+                adapter.products.addAll(products)
+                adapter.notifyItemRangeInserted(0, products.size)
+            } else {
+                for ((index, product) in products.withIndex()) {
+                    if (products[index] != adapter.products[index]) {
+                        adapter.products[index] = product
+                        adapter.notifyItemChanged(index)
+                    }
+                }
+            }
+        }
+
         storeViewModel.currency.observe(viewLifecycleOwner) { currency ->
             currency?.let {
                 binding.productsRecyclerView.visibility = View.VISIBLE
@@ -56,11 +70,11 @@ class ProductsFragment : Fragment() {
         }
     }
 
-    fun updateCart(index: Int) {
-        adapter.products[index].inCart = !adapter.products[index].inCart
-        adapter.notifyItemChanged(index)
+    fun toggleInCart(index: Int) {
+        val updatedProducts =  adapter.products
+        updatedProducts[index].inCart = !updatedProducts[index].inCart
 
-        storeViewModel.products.value = adapter.products
+        storeViewModel.products.value = updatedProducts
         storeViewModel.calculateOrderTotal()
     }
 
