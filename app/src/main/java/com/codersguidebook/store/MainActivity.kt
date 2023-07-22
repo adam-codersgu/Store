@@ -61,8 +61,7 @@ class MainActivity : AppCompatActivity(), PayPalListener {
         val broccoli = Product(R.drawable.broccoli, "Broccoli", 1.40)
         val carrots = Product(R.drawable.carrot, "Carrots", 0.35)
         val strawberries = Product(R.drawable.strawberry, "Strawberries", 2.00)
-        val items = listOf(broccoli, carrots, strawberries)
-        storeViewModel.products.value = items
+        storeViewModel.products.value = listOf(broccoli, carrots, strawberries)
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         getCurrencyData()
@@ -71,6 +70,8 @@ class MainActivity : AppCompatActivity(), PayPalListener {
         paypalClient = PayPalClient(this, braintreeClient)
 
         getClientToken()
+
+        paypalClient.setListener(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -180,7 +181,7 @@ class MainActivity : AppCompatActivity(), PayPalListener {
         val params = RequestParams().apply {
             put("amount", sharedPreferences.getString("orderTotal", null) ?: return)
             put("currency_iso_code", storeViewModel.currency.value?.code ?: defCurrency)
-            put("payment_method_nonce", payPalAccountNonce)
+            put("payment_method_nonce", payPalAccountNonce.string)
             put("client_device_data", deviceData)
         }
 
