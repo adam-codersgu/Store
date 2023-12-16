@@ -9,6 +9,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Store">
         <activity
@@ -26,9 +27,6 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="${applicationId}.braintree" />
             </intent-filter>
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
         </activity>
     </application>
 
