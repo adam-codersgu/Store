@@ -3,7 +3,6 @@
 namespace Braintree\Error;
 
 /**
- *
  * Validation Error codes and messages
  *
  * ErrorCodes class provides constants for validation errors.
@@ -11,10 +10,6 @@ namespace Braintree\Error;
  * error in a ValidationErrorCollection.
  * The error messages returned from the server may change;
  * but the codes will remain the same.
- *
- * @package    Braintree
- * @subpackage Errors
- * @category   Validation
  */
 class Codes
 {
@@ -467,6 +462,10 @@ class Codes
     const PROCESSOR_DOES_NOT_SUPPORT_AUTH_ADJUSTMENT                                  = '915222';
     const PROCESSOR_DOES_NOT_SUPPORT_INCREMENTAL_AUTH                                 = '915220';
     const PROCESSOR_DOES_NOT_SUPPORT_PARTIAL_AUTH_REVERSAL                            = '915221';
+
+    const SEPA_DEBIT_ACCOUNT_PAYMENT_METHOD_MANDATE_TYPE_IS_NOT_SUPPORTED = '87115';
+    const SEPA_DEBIT_ACCOUNT_PAYMENT_METHOD_CUSTOMER_ID_IS_INVALID        = '87116';
+    const SEPA_DEBIT_ACCOUNT_PAYMENT_METHOD_CUSTOMER_ID_IS_REQUIRED       = '87117';
 
     const SETTLEMENT_BATCH_SUMMARY_SETTLEMENT_DATE_IS_INVALID  = '82302';
     const SETTLEMENT_BATCH_SUMMARY_SETTLEMENT_DATE_IS_REQUIRED = '82301';
