@@ -9,4 +9,3 @@ data class Product(
     var price: Double,
     var inCart: Boolean = false
 )
-

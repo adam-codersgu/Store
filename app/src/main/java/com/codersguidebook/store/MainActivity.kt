@@ -12,8 +12,13 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
-import com.braintreepayments.api.*
+import com.braintreepayments.api.BraintreeClient
+import com.braintreepayments.api.DataCollector
+import com.braintreepayments.api.PayPalAccountNonce
+import com.braintreepayments.api.PayPalCheckoutRequest
 import com.braintreepayments.api.PayPalCheckoutRequest.USER_ACTION_COMMIT
+import com.braintreepayments.api.PayPalClient
+import com.braintreepayments.api.PayPalListener
 import com.codersguidebook.store.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.loopj.android.http.AsyncHttpClient
@@ -21,7 +26,6 @@ import com.loopj.android.http.RequestParams
 import com.loopj.android.http.TextHttpResponseHandler
 import cz.msebera.android.httpclient.Header
 import org.json.JSONObject
-
 
 class MainActivity : AppCompatActivity(), PayPalListener {
 

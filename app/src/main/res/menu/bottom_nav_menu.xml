@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-    android:id="@+id/navigation_products"
-    android:icon="@drawable/ic_store"
-    android:title="@string/title_products" />
+        android:id="@+id/navigation_products"
+        android:icon="@drawable/ic_store"
+        android:title="@string/title_products" />
 
     <item
         android:id="@+id/navigation_checkout"

@@ -7,7 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DefaultItemAnimator
-import com.codersguidebook.store.*
+import com.codersguidebook.store.Currency
+import com.codersguidebook.store.MainActivity
+import com.codersguidebook.store.Product
+import com.codersguidebook.store.R
+import com.codersguidebook.store.StoreViewModel
 import com.codersguidebook.store.databinding.FragmentCheckoutBinding
 
 class CheckoutFragment : Fragment() {

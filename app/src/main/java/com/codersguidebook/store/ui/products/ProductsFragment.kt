@@ -14,13 +14,13 @@ import com.codersguidebook.store.databinding.FragmentProductsBinding
 class ProductsFragment : Fragment() {
 
     private var _binding: FragmentProductsBinding? = null
+    private val storeViewModel: StoreViewModel by activityViewModels()
     private lateinit var mainActivity: MainActivity
     private lateinit var adapter: ProductsAdapter
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private val storeViewModel: StoreViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
